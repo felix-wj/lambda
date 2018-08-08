@@ -12,4 +12,13 @@ import lombok.Data;
 public class Track {
     /** 曲目名 */
     private String name;
+    /** 时长 */
+    private Integer time;
+
+    public Track() {}
+
+    public Track(String name, Integer time) {
+        this.name = name;
+        this.time = time;
+    }
 }

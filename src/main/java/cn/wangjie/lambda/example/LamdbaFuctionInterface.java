@@ -2,10 +2,7 @@ package cn.wangjie.lambda.example;
 
 import cn.wangjie.lambda.bean.Track;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 /**
  * @program: lambda
@@ -29,6 +26,14 @@ public class LamdbaFuctionInterface {
         //输入T类型，返回R类型
         Function<Track,String> trackStringFunction = t -> "这支曲目名叫："+t.getName();
         System.out.println(trackStringFunction.apply(track));
+
+        //输入(T,T) ，返回T
+        BinaryOperator<Long> add = (x, y) -> x+y;
+        System.out.println(add.apply(1L,2L));
+
+        //Supplier<T> , 无入参，返回T类型，可用于工厂方法
+
+        //UnaryOperator<T> 输入T类型，返回T类型
 
 
 
