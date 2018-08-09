@@ -2,6 +2,8 @@ package cn.wangjie.lambda.bean;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @program: lambda
  * @description: 专辑
@@ -13,7 +15,7 @@ public class Albun {
     /** 专辑名 */
     private String name;
     /** 专辑曲目列表*/
-    private String tracks;
+    private List<String> tracks;
     /** 专辑艺术家列表 */
-    private String musicians;
+    private List<String> musicians;
 }

@@ -2,11 +2,9 @@ package cn.wangjie.lambda.example;
 
 import cn.wangjie.lambda.bean.Artist;
 import cn.wangjie.lambda.bean.Track;
+import cn.wangjie.lambda.util.StringCombiner;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,11 +40,56 @@ public class LambdaStream {
         List<String> strings3 = Stream.of(strings1,strings2).flatMap(Collection::stream).collect(Collectors.toList());
         System.out.println(strings3);
 
-        //min max
-        Track track = Stream.of(new Track("十年",240) ,
+
+        List<Track> trackList = Stream.of(new Track("十年",240) ,
                 new Track("温柔",270),
-                new Track("山丘",300)).min(Comparator.comparing(Track::getTime)).get();
+                new Track("山丘",300)).collect(Collectors.toList());
+
+        //min max 得到的是一个optional对象，调用他的get得到具体对象
+        Track track = trackList.stream().min(Comparator.comparing(Track::getTime)).get();
         System.out.println(track);
+        Optional<Track> trackOptional = trackList.stream().min(Comparator.comparing(Track::getTime));
+        trackOptional.ifPresent(System.out::println);
+        System.out.println(trackOptional.map(Track::getName).orElse("无"));
+
+
+        IntSummaryStatistics trackTimeStats = trackList.stream().mapToInt(Track::getTime).summaryStatistics();
+        System.out.printf("Max:%d ,Min:%d,Ave:%f,Sum:%d ,Total:%d \n",
+                trackTimeStats.getMax(),
+                trackTimeStats.getMin(),
+                trackTimeStats.getAverage(),
+                trackTimeStats.getSum(),
+                trackTimeStats.getCount());
+
+        /** reduce有三种
+         *  1.无初始值，起始时，第一个参数为stream第一个值，第二个参数为stream第二个值，
+         *    之后第一个参数为中间值，第二个参数为stream下一个值。
+         *    返回数据为optional类型，因为stream可能为空。
+         *  2.指定初始值，不会返回optional，因为已经指定了初始值
+         *  3.自定义返回类型数据，
+         *    第一个参数为要返回的数据类型的实例化参数，
+         *    第二个参数是接口函数，什么累加逻辑(u,t)->u.apply(t)
+         *    第三个参数是接口函数，组合器,如果进行并行操作，期间会得到多个中间值，需要指定合并逻辑
+         *
+         */
+        Optional<Integer> optionalInteger = Stream.of(1,2,3,4,5,6).reduce((a,b)->a+b);
+        System.out.println(optionalInteger.get());
+
+        int sum = Stream.of(1,2,3,4,5,6).reduce(0,(a,b)->a+b);
+        System.out.println(sum);
+
+        /**
+         *  这里如果使用parallel指定流为并行流，并行之后的数据出乎意料
+         *  如果不指定并行，第三个函数几口将不会发挥作用
+         */
+        StringBuilder str = Stream.of("a","b","c","d").parallel().reduce(new StringBuilder(),(builder,s)->{builder.append(s);return builder;},(left,right)->left.append(right));
+        System.out.println(str);
+        str = Stream.of("a","b","c","d").reduce(new StringBuilder(),(builder,s)->{builder.append(s);return builder;},(left,right)->left.append(right));
+        System.out.println(str);
+        StringCombiner str1 = Stream.of("a","b","c","d").reduce(new StringCombiner(",","[","]"),StringCombiner::add,StringCombiner::merge);
+        System.out.println(str1);
+
+
     }
 
 

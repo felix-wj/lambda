@@ -17,6 +17,10 @@ public class Track {
 
     public Track() {}
 
+    public Track(String name) {
+        this.name = name;
+    }
+
     public Track(String name, Integer time) {
         this.name = name;
         this.time = time;
