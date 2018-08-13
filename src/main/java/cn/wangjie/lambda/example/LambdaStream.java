@@ -82,12 +82,14 @@ public class LambdaStream {
          *  这里如果使用parallel指定流为并行流，并行之后的数据出乎意料
          *  如果不指定并行，第三个函数几口将不会发挥作用
          */
-        StringBuilder str = Stream.of("a","b","c","d").parallel().reduce(new StringBuilder(),(builder,s)->{builder.append(s);return builder;},(left,right)->left.append(right));
+        StringBuilder str = Stream.of("a","b","c","d").parallel().reduce(new StringBuilder(),StringBuilder::append,StringBuilder::append);
         System.out.println(str);
         str = Stream.of("a","b","c","d").reduce(new StringBuilder(),(builder,s)->{builder.append(s);return builder;},(left,right)->left.append(right));
         System.out.println(str);
         StringCombiner str1 = Stream.of("a","b","c","d").reduce(new StringCombiner(",","[","]"),StringCombiner::add,StringCombiner::merge);
         System.out.println(str1);
+        int num = Stream.of(1,2,3,4,5,6).parallel().reduce(0,(x,y)->x+y,(x,y)->x+y);
+        System.out.println(num);
 
 
     }

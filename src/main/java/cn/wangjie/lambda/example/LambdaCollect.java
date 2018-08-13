@@ -34,5 +34,9 @@ public class LambdaCollect {
         String songNames = trackList.stream().map(Track::getName).collect(Collectors.joining(",","[","]"));
         System.out.println(songNames);
 
+        //统计每个单词出现次数
+        Stream<String> names = Stream.of("John", "Paul", "George", "John", "Paul", "John");
+        Map<String , Long> countWords = names.collect(Collectors.groupingBy(name ->name ,Collectors.counting()));
+
     }
 }

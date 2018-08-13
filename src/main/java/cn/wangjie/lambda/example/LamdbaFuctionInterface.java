@@ -31,7 +31,13 @@ public class LamdbaFuctionInterface {
         BinaryOperator<Long> add = (x, y) -> x+y;
         System.out.println(add.apply(1L,2L));
 
-        //Supplier<T> , 无入参，返回T类型，可用于工厂方法
+        /**
+         * Supplier<T> , 无入参，返回T类型，可用于工厂方法,用法参见CompleteableFutureExample
+         * 使用方式：第一步，构造一个方法，入参为Supplier函数,方法体中调用get()执行这个函数。同时也可以做其他处理
+         *         第二步，在其他地方使用第一步构造的方法，入参传入自己定义的一个Supplier函数
+         */
+
+
 
         //UnaryOperator<T> 输入T类型，返回T类型
 
