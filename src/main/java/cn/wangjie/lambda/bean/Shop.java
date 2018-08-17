@@ -2,6 +2,8 @@ package cn.wangjie.lambda.bean;
 
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -56,5 +58,12 @@ public class Shop {
     public static double getpriceExchangeRate() {
         delay();
         return 0.8;
+    }
+    public static  List<String> getlist(){
+        delay();
+        List<String> list = new ArrayList(3);
+        list.add("a");
+        list.add("b");
+        return list;
     }
 }

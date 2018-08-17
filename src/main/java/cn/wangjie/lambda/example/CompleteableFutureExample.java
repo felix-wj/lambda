@@ -5,15 +5,17 @@ import cn.wangjie.lambda.bean.Discount;
 import cn.wangjie.lambda.bean.Quote;
 import cn.wangjie.lambda.bean.Shop;
 import cn.wangjie.lambda.util.ThreadPoolUtil;
+import com.sun.xml.internal.ws.util.CompletedFuture;
 import org.junit.Test;
+import org.w3c.dom.ls.LSException;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @program: lambda
@@ -198,6 +200,29 @@ public class CompleteableFutureExample {
         excute(method);
 
     }
+
+    /**
+     * 将CompleteableFuture<List<Object>对象中的list转成流，操作每一个元素
+     */
+    @Test
+    public void test9(){
+        CompletableFuture<List<List<String>>> future = CompletableFuture.supplyAsync(()->Arrays.asList(Arrays.asList("a","b"),Arrays.asList("c","d")));
+        System.out.println(future.thenApply(t->Stream.of(t).flatMap(Collection::stream)).thenApply(stream->stream.flatMap(Collection::stream)).join().collect(Collectors.toList()));
+        System.out.println(future.thenApply(t->t.stream().flatMap(Collection::stream)).join().collect(Collectors.toList()));
+        future.thenApply(Collection::stream).thenApply(listStream -> listStream.flatMap(Collection::stream)).thenAccept(stringStream -> stringStream.forEach(System.out::println));
+        //List<String> strings =future.join().stream().flatMap(t->t.stream()).collect(Collectors.toList());
+       // System.out.println(strings);
+    }
+    @Test
+    public void test10() {
+        CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> 100);
+        CompletableFuture<Void> f =  future.thenAcceptBoth(CompletableFuture.completedFuture(10), (x, y) -> System.out.println(x * y));
+        System.out.println(f.getNow(null));
+    }
+
+
+
+
 
 
 }

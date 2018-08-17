@@ -92,6 +92,12 @@ public class LambdaStream {
         System.out.println(num);
 
 
+        //无线流
+        Stream.iterate(0,n-> n+2).limit(5).forEach(System.out::println);
+        Stream.iterate(new int[]{0,1},t->new int[]{t[1],t[0]+t[1]}).limit(5).map(t->t[0]).forEach(System.out::println);
+        Stream.generate(Math::random).limit(5).forEach(System.out::println);
+
+
     }
 
 
