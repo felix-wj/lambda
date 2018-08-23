@@ -3,6 +3,7 @@ package cn.wangjie.lambda.example;
 import cn.wangjie.lambda.bean.Artist;
 import cn.wangjie.lambda.bean.Track;
 import cn.wangjie.lambda.util.StringCombiner;
+import org.junit.Test;
 
 import java.util.*;
 
@@ -39,6 +40,8 @@ public class LambdaStream {
         List<String> strings2 = Stream.of("f","g").collect(Collectors.toList());
         List<String> strings3 = Stream.of(strings1,strings2).flatMap(Collection::stream).collect(Collectors.toList());
         System.out.println(strings3);
+
+
 
 
         List<Track> trackList = Stream.of(new Track("十年",240) ,
@@ -100,5 +103,12 @@ public class LambdaStream {
 
     }
 
+    /**
+     * 装箱
+     */
+    @Test
+    public void test1(){
+        Stream.of("a","ab","cd").flatMap(str->str.chars().boxed()).forEach(System.out::println);
+    }
 
 }

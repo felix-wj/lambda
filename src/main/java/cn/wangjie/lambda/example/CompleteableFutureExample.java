@@ -5,14 +5,10 @@ import cn.wangjie.lambda.bean.Discount;
 import cn.wangjie.lambda.bean.Quote;
 import cn.wangjie.lambda.bean.Shop;
 import cn.wangjie.lambda.util.ThreadPoolUtil;
-import com.sun.xml.internal.ws.util.CompletedFuture;
 import org.junit.Test;
-import org.w3c.dom.ls.LSException;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -112,7 +108,7 @@ public class CompleteableFutureExample {
                 .collect(Collectors.toList()));
     }
 
-    public  <T> void  excute(Supplier<List<T>> supplier) {
+    public <T> void excute(Supplier<List<T>> supplier) {
         long start = System.currentTimeMillis();
         List<T> prices = supplier.get();
         long end = System.currentTimeMillis();
@@ -183,7 +179,7 @@ public class CompleteableFutureExample {
             List<CompletableFuture<Double>> priceFutures = shops.stream()
                     .map(
                             shop -> CompletableFuture.supplyAsync(
-                                    () -> shop.getPrice("peach"),ThreadPoolUtil.getExecutorService()
+                                    () -> shop.getPrice("peach"), ThreadPoolUtil.getExecutorService()
                             )
                                     .thenApply(Quote::parse)
                                     .thenCombine(
@@ -205,24 +201,44 @@ public class CompleteableFutureExample {
      * 将CompleteableFuture<List<Object>对象中的list转成流，操作每一个元素
      */
     @Test
-    public void test9(){
-        CompletableFuture<List<List<String>>> future = CompletableFuture.supplyAsync(()->Arrays.asList(Arrays.asList("a","b"),Arrays.asList("c","d")));
-        System.out.println(future.thenApply(t->Stream.of(t).flatMap(Collection::stream)).thenApply(stream->stream.flatMap(Collection::stream)).join().collect(Collectors.toList()));
-        System.out.println(future.thenApply(t->t.stream().flatMap(Collection::stream)).join().collect(Collectors.toList()));
+    public void test9() {
+        CompletableFuture<List<List<String>>> future = CompletableFuture.supplyAsync(() -> Arrays.asList(Arrays.asList("a", "b"), Arrays.asList("c", "d")));
+        System.out.println(future.thenApply(t -> Stream.of(t).flatMap(Collection::stream)).thenApply(stream -> stream.flatMap(Collection::stream)).join().collect(Collectors.toList()));
+        System.out.println(future.thenApply(t -> t.stream().flatMap(Collection::stream)).join().collect(Collectors.toList()));
         future.thenApply(Collection::stream).thenApply(listStream -> listStream.flatMap(Collection::stream)).thenAccept(stringStream -> stringStream.forEach(System.out::println));
         //List<String> strings =future.join().stream().flatMap(t->t.stream()).collect(Collectors.toList());
-       // System.out.println(strings);
+        // System.out.println(strings);
     }
+
     @Test
     public void test10() {
         CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> 100);
-        CompletableFuture<Void> f =  future.thenAcceptBoth(CompletableFuture.completedFuture(10), (x, y) -> System.out.println(x * y));
+        CompletableFuture<Void> f = future.thenAcceptBoth(CompletableFuture.completedFuture(10), (x, y) -> System.out.println(x * y));
         System.out.println(f.getNow(null));
+        CompletableFuture.supplyAsync(() -> Shop.getlist()).thenApply(list -> {
+            list.add("f");
+            return list;
+        }).thenAccept(System.out::println).join();
+
+
     }
 
-
-
-
+    /**
+     * 异常处理
+     */
+    @Test
+    public void test11 (){
+        CompletableFuture.supplyAsync(()->{throw new RuntimeException("test");}).handle((result,ex)->{
+            if (ex!=null){
+                return null;
+            }
+            return result;
+        }).join();
+        CompletableFuture.supplyAsync(()->{throw new RuntimeException("test");}).exceptionally((ex)->{
+            System.out.println("出错");
+            return new RuntimeException("出错");
+        }).join();
+    }
 
 
 }
