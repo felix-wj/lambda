@@ -1,7 +1,9 @@
 package cn.wangjie.lambda.example;
 
 import cn.wangjie.lambda.bean.Track;
+import org.junit.Test;
 
+import java.io.*;
 import java.util.function.*;
 
 /**
@@ -20,16 +22,16 @@ public class LamdbaFuctionInterface {
         System.out.println(trackPredicate.test(track));
 
         //返回void
-        Consumer<Track> trackConsumer = t-> System.out.println(t.getName());
+        Consumer<Track> trackConsumer = t -> System.out.println(t.getName());
         trackConsumer.accept(track);
 
         //输入T类型，返回R类型
-        Function<Track,String> trackStringFunction = t -> "这支曲目名叫："+t.getName();
+        Function<Track, String> trackStringFunction = t -> "这支曲目名叫：" + t.getName();
         System.out.println(trackStringFunction.apply(track));
 
         //输入(T,T) ，返回T
-        BinaryOperator<Long> add = (x, y) -> x+y;
-        System.out.println(add.apply(1L,2L));
+        BinaryOperator<Long> add = (x, y) -> x + y;
+        System.out.println(add.apply(1L, 2L));
 
         /**
          * Supplier<T> , 无入参，返回T类型，可用于工厂方法,用法参见CompleteableFutureExample
@@ -38,12 +40,56 @@ public class LamdbaFuctionInterface {
          */
 
 
-
         //UnaryOperator<T> 输入T类型，返回T类型
 
 
+    }
 
+    @Test
+    public void testSupplier() {
 
+        Supplier<Integer> getInteger = () -> {
+            throw new RuntimeException("抛出异常");
+            //return new Integer(0);
+        };
+        try {
+            getInteger.get();
+        } catch (Exception e) {
+            System.out.println("捕获异常");
+        }
 
     }
+
+    @Test
+    public void testSerializeLambda1() throws Exception {
+
+        Runnable r = (Runnable & Serializable)() -> System.out.println("hello serialization");
+        FileOutputStream fos = new FileOutputStream("Runnable.lambda");
+        ObjectOutputStream os = new ObjectOutputStream(fos);
+        os.writeObject(r);
+        FileInputStream fis = new FileInputStream("Runnable.lambda");
+        ObjectInputStream is = new ObjectInputStream(fis);
+        r = (Runnable) is.readObject();
+        r.run();
+    }
+
+
+    @Test
+    public void testSerializeLambda2() throws Exception {
+
+        Track track = new Track();
+        track.setName("十年");
+        Supplier r = (Supplier & Serializable)() -> 1;
+
+        FileOutputStream fos = new FileOutputStream("Runnable.lambda");
+        ObjectOutputStream os = new ObjectOutputStream(fos);
+        os.writeObject(r);
+        FileInputStream fis = new FileInputStream("Runnable.lambda");
+        ObjectInputStream is = new ObjectInputStream(fis);
+        r = (Supplier) is.readObject();
+        System.out.println(r.get());
+    }
+
+
+
 }
