@@ -16,28 +16,31 @@ import java.util.concurrent.*;
  */
 public class ThreadPoolUtil {
 
-    private static ExecutorService executorService;
+    private volatile static ExecutorService executorService;
+
+    private ThreadPoolUtil(){}
 
     public static ExecutorService getExecutorService() {
 
         if (executorService == null) {
+            synchronized (ThreadPoolUtil.class) {
+                /**
+                 * 使用谷歌的guava框架
+                 * ThreadPoolExecutor参数解释
+                 *   1.corePoolSize 核心线程池大小
+                 *   2.maximumPoolSize 线程池最大容量大小
+                 *   3.keepAliveTime 线程池空闲时，线程存活的时间
+                 *   4.TimeUnit 时间单位
+                 *   5.ThreadFactory 线程工厂
+                 *   6.BlockingQueue任务队列
+                 *   7.RejectedExecutionHandler 线程拒绝策略
+                 */
+                ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("demo-pool-%d").build();
+                executorService = new ThreadPoolExecutor(10, 20,
+                        0L, TimeUnit.MILLISECONDS,
+                        new LinkedBlockingQueue<Runnable>(1024), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
 
-            /**
-             * 使用谷歌的guava框架
-             * ThreadPoolExecutor参数解释
-             *   1.corePoolSize 核心线程池大小
-             *   2.maximumPoolSize 线程池最大容量大小
-             *   3.keepAliveTime 线程池空闲时，线程存活的时间
-             *   4.TimeUnit 时间单位
-             *   5.ThreadFactory 线程工厂
-             *   6.BlockingQueue任务队列
-             *   7.RejectedExecutionHandler 线程拒绝策略
-             */
-            ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("demo-pool-%d").build();
-            executorService = new ThreadPoolExecutor(10, 20,
-                    0L, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<Runnable>(1024), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
-
+            }
         }
         return executorService;
     }
