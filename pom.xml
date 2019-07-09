@@ -31,18 +31,6 @@
     </dependencies>
 
 
-    <distributionManagement>
-        <repository>
-            <id>null-release</id>
-            <name>Release Repository of null</name>
-            <url>http://118.25.87.131:8081/repository/null-release/</url>
-        </repository>
-        <snapshotRepository>
-            <id>null-snapshot</id>
-            <name>Snapshot Repository of bull</name>
-            <url>http://118.25.87.131:8081/repository/null-snapshot/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
 
 </project>

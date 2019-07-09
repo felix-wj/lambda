@@ -111,4 +111,23 @@ public class LambdaStream {
         Stream.of("a","ab","cd").flatMap(str->str.chars().boxed()).forEach(System.out::println);
     }
 
+    /**
+     * map 和filter
+     */
+    @Test
+    public void test2(){
+        List<Integer> ids = Arrays.asList(1,2,3,4,5);
+        ids.stream().map(id->{
+            if (id==2){
+                return null;
+            }
+            return "id:"+id;
+        }).filter(s -> {
+            if (s==null){
+                return false;
+            }
+            return true;
+        }).forEach(System.out::println);
+
+    }
 }
